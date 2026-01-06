@@ -26,7 +26,6 @@ classifiers = [
 keywords = ["cisco", "network", "testing", "pyats", "nac", "aci", "sdwan", "catalyst-center"]
 
 dependencies = [
-    "nac-test~=1.1.0b1",  # Core framework dependency (brings pyats as transitive dep)
     "httpx>=0.28",        # HTTP client for auth
 ]
 
