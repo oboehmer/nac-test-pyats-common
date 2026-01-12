@@ -16,7 +16,6 @@ import os
 from typing import Any
 
 import httpx
-
 from nac_test.pyats_core.common.auth_cache import AuthCache  # type: ignore[import-untyped]
 
 # Default session lifetime for SDWAN Manager authentication in seconds
@@ -57,9 +56,7 @@ class SDWANManagerAuth:
     """
 
     @staticmethod
-    def _authenticate(
-        url: str, username: str, password: str
-    ) -> tuple[dict[str, Any], int]:
+    def _authenticate(url: str, username: str, password: str) -> tuple[dict[str, Any], int]:
         """Perform direct SDWAN Manager authentication and obtain session data.
 
         This method performs a direct authentication request to the SDWAN Manager
@@ -102,9 +99,7 @@ class SDWANManagerAuth:
         """
         # NOTE: SSL verification is disabled (verify=False) to handle self-signed
         # certificates commonly used in lab and development deployments.
-        with httpx.Client(
-            verify=False, timeout=AUTH_REQUEST_TIMEOUT_SECONDS
-        ) as client:
+        with httpx.Client(verify=False, timeout=AUTH_REQUEST_TIMEOUT_SECONDS) as client:
             # Step 1: Form-based login to SDWAN Manager
             auth_response = client.post(
                 f"{url}/j_security_check",
@@ -139,7 +134,10 @@ class SDWANManagerAuth:
                 # Pre-19.2 does not support XSRF tokens, continue without
                 pass
 
-            return {"jsessionid": jsessionid, "xsrf_token": xsrf_token}, SDWAN_MANAGER_SESSION_LIFETIME_SECONDS
+            return {
+                "jsessionid": jsessionid,
+                "xsrf_token": xsrf_token,
+            }, SDWAN_MANAGER_SESSION_LIFETIME_SECONDS
 
     @classmethod
     def get_auth(cls) -> dict[str, Any]:
@@ -199,9 +197,7 @@ class SDWANManagerAuth:
                 missing_vars.append("SDWAN_USERNAME")
             if not password:
                 missing_vars.append("SDWAN_PASSWORD")
-            raise ValueError(
-                f"Missing required environment variables: {', '.join(missing_vars)}"
-            )
+            raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
 
         # Normalize URL by removing trailing slash
         url = url.rstrip("/")  # type: ignore[union-attr]

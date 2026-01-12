@@ -16,7 +16,6 @@ import os
 from typing import Any
 
 import httpx
-
 from nac_test.pyats_core.common.auth_cache import AuthCache  # type: ignore[import-untyped]
 
 # Default token lifetime for Catalyst Center authentication in seconds
@@ -97,9 +96,7 @@ class CatalystCenterAuth:
         """
         last_error: Exception | None = None
 
-        with httpx.Client(
-            verify=verify_ssl, timeout=AUTH_REQUEST_TIMEOUT_SECONDS
-        ) as client:
+        with httpx.Client(verify=verify_ssl, timeout=AUTH_REQUEST_TIMEOUT_SECONDS) as client:
             for endpoint in AUTH_ENDPOINTS:
                 try:
                     auth_response = client.post(
@@ -132,8 +129,7 @@ class CatalystCenterAuth:
 
             # All endpoints failed
             raise RuntimeError(
-                f"Catalyst Center authentication failed on all endpoints. "
-                f"Last error: {last_error}"
+                f"Catalyst Center authentication failed on all endpoints. Last error: {last_error}"
             ) from last_error
 
     @classmethod
@@ -190,9 +186,7 @@ class CatalystCenterAuth:
                 missing_vars.append("CC_USERNAME")
             if not password:
                 missing_vars.append("CC_PASSWORD")
-            raise ValueError(
-                f"Missing required environment variables: {', '.join(missing_vars)}"
-            )
+            raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
 
         # Normalize URL by removing trailing slash
         url = url.rstrip("/")  # type: ignore[union-attr]

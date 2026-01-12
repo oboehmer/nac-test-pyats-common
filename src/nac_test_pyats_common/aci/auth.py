@@ -14,7 +14,6 @@ re-authenticating when necessary, reducing unnecessary API calls to the APIC con
 """
 
 import httpx
-
 from nac_test.pyats_core.common.auth_cache import AuthCache  # type: ignore[import-untyped]
 
 # Default token lifetime for APIC authentication tokens in seconds
@@ -83,7 +82,7 @@ class APICAuth:
             response.raise_for_status()
 
             # Parse the APIC response and extract the token
-            # The response structure is: {"imdata": [{"aaaLogin": {"attributes": {"token": "..."}}}]}
+            # Response structure: {"imdata": [{"aaaLogin": {"attributes": {"token": "..."}}}]}
             try:
                 response_data = response.json()
                 token = response_data["imdata"][0]["aaaLogin"]["attributes"]["token"]

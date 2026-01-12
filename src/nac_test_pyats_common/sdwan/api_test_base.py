@@ -13,9 +13,8 @@ import asyncio
 from typing import Any
 
 import httpx
-from pyats import aetest  # type: ignore[import-untyped]
-
 from nac_test.pyats_core.common.base_test import NACTestBase  # type: ignore[import-untyped]
+from pyats import aetest  # type: ignore[import-untyped]
 
 from .auth import SDWANManagerAuth
 
@@ -63,7 +62,7 @@ class SDWANManagerTestBase(NACTestBase):  # type: ignore[misc]
 
     client: httpx.AsyncClient | None = None  # MUST declare at class level
 
-    @aetest.setup  # type: ignore[misc]
+    @aetest.setup  # type: ignore[misc, untyped-decorator]
     def setup(self) -> None:
         """Setup method that extends the generic base class setup.
 

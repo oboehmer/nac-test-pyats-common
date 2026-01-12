@@ -8,13 +8,10 @@ abstract methods for schema navigation and credential retrieval.
 import logging
 import os
 from abc import ABC, abstractmethod
-from pathlib import Path
 from typing import Any
 
 import yaml
-
 from nac_test.utils.file_discovery import find_data_file
-
 
 logger = logging.getLogger(__name__)
 
@@ -128,9 +125,7 @@ class BaseDeviceResolver(ABC):
                 )
             except (KeyError, ValueError) as e:
                 device_id = self._safe_extract_device_id(device_data)
-                logger.warning(
-                    f"Skipping device {device_id}: {e}"
-                )
+                logger.warning(f"Skipping device {device_id}: {e}")
                 continue
 
         # Inject credentials (fail fast if missing)
@@ -222,9 +217,9 @@ class BaseDeviceResolver(ABC):
             # Flat: {test_inventory: {...}}
             arch_key = self.get_schema_root_key()
             if arch_key in raw_data and "test_inventory" in raw_data[arch_key]:
-                return raw_data[arch_key]["test_inventory"]
+                return raw_data[arch_key]["test_inventory"]  # type: ignore[no-any-return]
             elif "test_inventory" in raw_data:
-                return raw_data["test_inventory"]
+                return raw_data["test_inventory"]  # type: ignore[no-any-return]
             else:
                 return raw_data
 

@@ -8,11 +8,12 @@ import logging
 from typing import Any
 
 from nac_test_pyats_common.common import BaseDeviceResolver
-
+from nac_test_pyats_common.iosxe.registry import register_iosxe_resolver
 
 logger = logging.getLogger(__name__)
 
 
+@register_iosxe_resolver("SDWAN")
 class SDWANDeviceResolver(BaseDeviceResolver):
     """SD-WAN device resolver for D2D testing.
 
@@ -110,9 +111,7 @@ class SDWANDeviceResolver(BaseDeviceResolver):
 
         # Fallback to chassis_id
         chassis_id = device_data.get("chassis_id", "unknown")
-        logger.warning(
-            f"No system_hostname found for {chassis_id}, using chassis_id as hostname"
-        )
+        logger.warning(f"No system_hostname found for {chassis_id}, using chassis_id as hostname")
         return str(chassis_id)
 
     def extract_host_ip(self, device_data: dict[str, Any]) -> str:
@@ -146,9 +145,9 @@ class SDWANDeviceResolver(BaseDeviceResolver):
                     break
             else:
                 raise ValueError(
-                    f"Could not find management IP for device. "
-                    f"Set 'management_ip_variable' in test_inventory or use "
-                    f"standard variable names (mgmt_ip, management_ip, vpn0_ip)."
+                    "Could not find management IP for device. "
+                    "Set 'management_ip_variable' in test_inventory or use "
+                    "standard variable names (mgmt_ip, management_ip, vpn0_ip)."
                 )
 
         # Strip CIDR notation if present
@@ -166,7 +165,7 @@ class SDWANDeviceResolver(BaseDeviceResolver):
         Returns:
             OS type string (e.g., "iosxe", "nxos", "iosxr").
         """
-        return device_data.get("os", "iosxe")
+        return str(device_data.get("os", "iosxe"))
 
     def get_credential_env_vars(self) -> tuple[str, str]:
         """Return IOS-XE credential env vars for SD-WAN edge devices.

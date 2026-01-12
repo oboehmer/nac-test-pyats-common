@@ -8,10 +8,9 @@ This module tests the base device resolver functionality including:
 - Full resolution flow
 """
 
-import os
 from pathlib import Path
 from typing import Any
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import patch
 
 import pytest
 import yaml
@@ -37,30 +36,30 @@ class MockDeviceResolver(BaseDeviceResolver):
     def navigate_to_devices(self) -> list[dict[str, Any]]:
         """Navigate to devices in the data model."""
         # Return devices from data_model["mock"]["devices"]
-        return self.data_model.get("mock", {}).get("devices", [])
+        return self.data_model.get("mock", {}).get("devices", [])  # type: ignore[no-any-return]
 
     def extract_device_id(self, device_data: dict[str, Any]) -> str:
         """Extract device ID from device data."""
-        return device_data["device_id"]
+        return device_data["device_id"]  # type: ignore[no-any-return]
 
     def extract_hostname(self, device_data: dict[str, Any]) -> str:
         """Extract hostname from device data."""
-        return device_data["hostname"]
+        return device_data["hostname"]  # type: ignore[no-any-return]
 
     def extract_host_ip(self, device_data: dict[str, Any]) -> str:
         """Extract IP address from device data."""
-        return device_data["host"]
+        return device_data["host"]  # type: ignore[no-any-return]
 
     def extract_os_type(self, device_data: dict[str, Any]) -> str:
         """Extract OS type from device data."""
-        return device_data["os"]
+        return device_data["os"]  # type: ignore[no-any-return]
 
     def get_credential_env_vars(self) -> tuple[str, str]:
         """Return environment variable names for credentials."""
         return ("MOCK_USERNAME", "MOCK_PASSWORD")
 
 
-@pytest.fixture
+@pytest.fixture  # type: ignore[untyped-decorator]
 def sample_data_model() -> dict[str, Any]:
     """Provide a sample data model for testing."""
     return {
@@ -89,7 +88,7 @@ def sample_data_model() -> dict[str, Any]:
     }
 
 
-@pytest.fixture
+@pytest.fixture  # type: ignore[untyped-decorator]
 def sample_test_inventory() -> dict[str, Any]:
     """Provide a sample test inventory."""
     return {
@@ -100,7 +99,7 @@ def sample_test_inventory() -> dict[str, Any]:
     }
 
 
-@pytest.fixture
+@pytest.fixture  # type: ignore[untyped-decorator]
 def mock_credentials(monkeypatch: pytest.MonkeyPatch) -> None:
     """Set mock credential environment variables."""
     monkeypatch.setenv("MOCK_USERNAME", "test_user")
@@ -293,8 +292,8 @@ class TestDeviceFiltering:
         test_inventory = {
             "devices": [
                 {"chassis_id": "device1"},  # Using chassis_id
-                {"node_id": "device2"},      # Using node_id
-                {"hostname": "device3"},     # Using hostname
+                {"node_id": "device2"},  # Using node_id
+                {"hostname": "device3"},  # Using hostname
             ]
         }
 
@@ -662,7 +661,7 @@ class TestFullResolutionFlow:
                     "connection_options": {
                         "protocol": "ssh",
                         "port": 4322,
-                    }
+                    },
                 }
             ]
         }
@@ -693,7 +692,7 @@ class TestFullResolutionFlow:
         """Test that appropriate logging is produced during resolution."""
         with caplog.at_level("INFO"):
             resolver = MockDeviceResolver(sample_data_model, test_inventory=sample_test_inventory)
-            devices = resolver.get_resolved_inventory()
+            _ = resolver.get_resolved_inventory()
 
         # Check for key log messages
         assert "Resolving device inventory for mock_arch" in caplog.text
@@ -706,7 +705,7 @@ class TestAbstractMethods:
     def test_cannot_instantiate_base_class(self) -> None:
         """Test that BaseDeviceResolver cannot be instantiated directly."""
         with pytest.raises(TypeError) as exc_info:
-            BaseDeviceResolver({})
+            BaseDeviceResolver({})  # type: ignore[abstract]
 
         assert "Can't instantiate abstract class" in str(exc_info.value)
 
@@ -725,7 +724,7 @@ class TestAbstractMethods:
             # Missing: navigate_to_devices, extract_device_id, etc.
 
         with pytest.raises(TypeError) as exc_info:
-            IncompleteResolver({})
+            IncompleteResolver({})  # type: ignore[abstract]
 
         assert "Can't instantiate abstract class" in str(exc_info.value)
 
@@ -746,14 +745,11 @@ class TestOptionalOverrides:
 
         # Create custom inventory file
         inventory_file = tmp_path / "custom_inventory.yaml"
-        inventory_data = {
-            "test_inventory": {
-                "devices": [{"device_id": "custom_device"}]
-            }
-        }
+        inventory_data = {"test_inventory": {"devices": [{"device_id": "custom_device"}]}}
         inventory_file.write_text(yaml.dump(inventory_data))
 
         with patch("nac_test_pyats_common.common.base_device_resolver.find_data_file") as mock_find:
+
             def find_side_effect(filename: str) -> Path | None:
                 if filename == "custom_inventory.yaml":
                     return inventory_file

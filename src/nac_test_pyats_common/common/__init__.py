@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Common base classes for nac-test-pyats-common.
 
 This module provides architecture-agnostic base classes that can be extended

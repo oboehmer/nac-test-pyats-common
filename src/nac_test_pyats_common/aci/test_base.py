@@ -13,9 +13,8 @@ import asyncio
 from typing import Any
 
 import httpx
-from pyats import aetest  # type: ignore[import-untyped]
-
 from nac_test.pyats_core.common.base_test import NACTestBase  # type: ignore[import-untyped]
+from pyats import aetest  # type: ignore[import-untyped]
 
 from .auth import APICAuth
 
@@ -54,7 +53,7 @@ class APICTestBase(NACTestBase):  # type: ignore[misc]
                 self.run_async_verification_test(steps)
     """
 
-    @aetest.setup  # type: ignore[misc]
+    @aetest.setup  # type: ignore[misc, untyped-decorator]
     def setup(self) -> None:
         """Setup method that extends the generic base class setup.
 
@@ -70,9 +69,7 @@ class APICTestBase(NACTestBase):  # type: ignore[misc]
         super().setup()
 
         # Get shared APIC token using file-based locking
-        self.token = APICAuth.get_token(
-            self.controller_url, self.username, self.password
-        )
+        self.token = APICAuth.get_token(self.controller_url, self.username, self.password)
 
         # Store the APIC client for use in verification methods
         self.client = self.get_apic_client()
@@ -97,9 +94,7 @@ class APICTestBase(NACTestBase):  # type: ignore[misc]
         """
         headers = {"Cookie": f"APIC-cookie={self.token}"}
         # SSL verification disabled for lab environment compatibility
-        client = self.pool.get_client(
-            base_url=self.controller_url, headers=headers, verify=False
-        )
+        client = self.pool.get_client(base_url=self.controller_url, headers=headers, verify=False)
 
         # Use the generic tracking wrapper from base class
         return self.wrap_client_for_tracking(client, device_name="APIC")  # type: ignore[no-any-return]
