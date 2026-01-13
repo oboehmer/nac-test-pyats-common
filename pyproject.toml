@@ -1,6 +1,6 @@
 [project]
 name = "nac-test-pyats-common"
-version = "1.0.0"
+version = "0.1.0"
 description = "Architecture adapters for Network as Code (NaC) PyATS testing - auth classes, test base classes, and device resolvers"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -29,9 +29,6 @@ keywords = ["cisco", "network", "testing", "pyats", "nac", "aci", "sdwan", "cata
 dependencies = [
     "httpx>=0.28",        # HTTP client for auth
 ]
-
-[tool.uv.sources]
-nac-test = { workspace = true }
 
 [project.optional-dependencies]
 dev = [
