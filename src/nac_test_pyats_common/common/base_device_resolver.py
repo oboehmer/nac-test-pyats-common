@@ -117,10 +117,12 @@ class BaseDeviceResolver(ABC):
             except (KeyError, ValueError) as e:
                 device_id = self._safe_extract_device_id(device_data)
                 logger.debug(f"Skipping device {device_id}: {e}")
-                self.skipped_devices.append({
-                    "device_id": device_id,
-                    "reason": str(e),
-                })
+                self.skipped_devices.append(
+                    {
+                        "device_id": device_id,
+                        "reason": str(e),
+                    }
+                )
                 continue
 
         # Inject credentials (fail fast if missing)

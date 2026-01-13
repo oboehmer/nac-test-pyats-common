@@ -292,9 +292,8 @@ class TestBuildDeviceDict:
     def test_skips_device_with_invalid_data(
         self,
         mock_credentials: None,
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
-        """Test that devices with invalid data are skipped with warning."""
+        """Test that devices with invalid data are skipped and tracked."""
         data_model = {
             "mock": {
                 "devices": [
@@ -330,8 +329,10 @@ class TestBuildDeviceDict:
         assert "device3" in device_ids
         assert "device2" not in device_ids
 
-        # Check for warning in logs
-        assert "Skipping device device2" in caplog.text
+        # Check skipped_devices tracking
+        assert len(resolver.skipped_devices) == 1
+        assert resolver.skipped_devices[0]["device_id"] == "device2"
+        assert "hostname" in resolver.skipped_devices[0]["reason"].lower()
 
 
 class TestFullResolutionFlow:
@@ -484,7 +485,6 @@ class TestErrorHandling:
     def test_handles_missing_device_fields_gracefully(
         self,
         mock_credentials: None,
-        caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that missing required fields are handled gracefully."""
 
@@ -521,8 +521,10 @@ class TestErrorHandling:
         assert len(devices) == 1
         assert devices[0]["device_id"] == "device1"
 
-        # Check for warning about device2
-        assert "Skipping device device2" in caplog.text
+        # Check skipped_devices tracking for device2
+        assert len(resolver.skipped_devices) == 1
+        assert resolver.skipped_devices[0]["device_id"] == "device2"
+        assert "'hostname'" in resolver.skipped_devices[0]["reason"]
 
     def test_safe_extract_device_id(
         self,
