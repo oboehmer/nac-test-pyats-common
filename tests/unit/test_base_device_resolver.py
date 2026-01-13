@@ -131,7 +131,9 @@ class TestInventoryLoading:
         inventory_file.write_text(yaml.dump(inventory_data))
 
         # Mock find_data_file to return our test file
-        with patch("nac_test_pyats_common.common.base_device_resolver.find_data_file") as mock_find:
+        with patch(
+            "nac_test_pyats_common.common.base_device_resolver.find_data_file"
+        ) as mock_find:
             mock_find.return_value = inventory_file
 
             resolver = MockDeviceResolver(sample_data_model)
@@ -144,7 +146,9 @@ class TestInventoryLoading:
         sample_data_model: dict[str, Any],
     ) -> None:
         """Test that empty inventory is used when file is not found."""
-        with patch("nac_test_pyats_common.common.base_device_resolver.find_data_file") as mock_find:
+        with patch(
+            "nac_test_pyats_common.common.base_device_resolver.find_data_file"
+        ) as mock_find:
             mock_find.return_value = None
 
             resolver = MockDeviceResolver(sample_data_model)
@@ -156,7 +160,10 @@ class TestInventoryLoading:
         sample_data_model: dict[str, Any],
         tmp_path: Path,
     ) -> None:
-        """Test loading inventory with nested format: {arch: {test_inventory: {...}}}."""
+        """Test loading inventory with nested format.
+
+        Format: {arch: {test_inventory: {...}}}.
+        """
         inventory_file = tmp_path / "test_inventory.yaml"
         inventory_data = {
             "mock": {
@@ -169,7 +176,9 @@ class TestInventoryLoading:
         }
         inventory_file.write_text(yaml.dump(inventory_data))
 
-        with patch("nac_test_pyats_common.common.base_device_resolver.find_data_file") as mock_find:
+        with patch(
+            "nac_test_pyats_common.common.base_device_resolver.find_data_file"
+        ) as mock_find:
             mock_find.return_value = inventory_file
 
             resolver = MockDeviceResolver(sample_data_model)
@@ -193,7 +202,9 @@ class TestInventoryLoading:
         }
         inventory_file.write_text(yaml.dump(inventory_data))
 
-        with patch("nac_test_pyats_common.common.base_device_resolver.find_data_file") as mock_find:
+        with patch(
+            "nac_test_pyats_common.common.base_device_resolver.find_data_file"
+        ) as mock_find:
             mock_find.return_value = inventory_file
 
             resolver = MockDeviceResolver(sample_data_model)
@@ -210,7 +221,9 @@ class TestInventoryLoading:
         inventory_file = tmp_path / "test_inventory.yaml"
         inventory_file.write_text("invalid: yaml: content: [")
 
-        with patch("nac_test_pyats_common.common.base_device_resolver.find_data_file") as mock_find:
+        with patch(
+            "nac_test_pyats_common.common.base_device_resolver.find_data_file"
+        ) as mock_find:
             mock_find.return_value = inventory_file
 
             resolver = MockDeviceResolver(sample_data_model)
@@ -222,7 +235,9 @@ class TestInventoryLoading:
         sample_data_model: dict[str, Any],
     ) -> None:
         """Test that OS errors when reading file result in empty inventory."""
-        with patch("nac_test_pyats_common.common.base_device_resolver.find_data_file") as mock_find:
+        with patch(
+            "nac_test_pyats_common.common.base_device_resolver.find_data_file"
+        ) as mock_find:
             mock_find.return_value = Path("/nonexistent/path/file.yaml")
 
             resolver = MockDeviceResolver(sample_data_model)
@@ -255,7 +270,9 @@ class TestDeviceFiltering:
         mock_credentials: None,
     ) -> None:
         """Test filtering devices to only those in test_inventory."""
-        resolver = MockDeviceResolver(sample_data_model, test_inventory=sample_test_inventory)
+        resolver = MockDeviceResolver(
+            sample_data_model, test_inventory=sample_test_inventory
+        )
         devices = resolver.get_resolved_inventory()
 
         assert len(devices) == 2
@@ -321,7 +338,9 @@ class TestCredentialInjection:
         mock_credentials: None,
     ) -> None:
         """Test successful injection of credentials from environment variables."""
-        resolver = MockDeviceResolver(sample_data_model, test_inventory=sample_test_inventory)
+        resolver = MockDeviceResolver(
+            sample_data_model, test_inventory=sample_test_inventory
+        )
         devices = resolver.get_resolved_inventory()
 
         for device in devices:
@@ -338,13 +357,17 @@ class TestCredentialInjection:
         monkeypatch.setenv("MOCK_PASSWORD", "test_pass")
         # MOCK_USERNAME is not set
 
-        resolver = MockDeviceResolver(sample_data_model, test_inventory=sample_test_inventory)
+        resolver = MockDeviceResolver(
+            sample_data_model, test_inventory=sample_test_inventory
+        )
 
         with pytest.raises(ValueError) as exc_info:
             resolver.get_resolved_inventory()
 
         assert "MOCK_USERNAME" in str(exc_info.value)
-        assert "Missing required credential environment variables" in str(exc_info.value)
+        assert "Missing required credential environment variables" in str(
+            exc_info.value
+        )
 
     def test_error_when_password_env_var_missing(
         self,
@@ -356,13 +379,17 @@ class TestCredentialInjection:
         monkeypatch.setenv("MOCK_USERNAME", "test_user")
         # MOCK_PASSWORD is not set
 
-        resolver = MockDeviceResolver(sample_data_model, test_inventory=sample_test_inventory)
+        resolver = MockDeviceResolver(
+            sample_data_model, test_inventory=sample_test_inventory
+        )
 
         with pytest.raises(ValueError) as exc_info:
             resolver.get_resolved_inventory()
 
         assert "MOCK_PASSWORD" in str(exc_info.value)
-        assert "Missing required credential environment variables" in str(exc_info.value)
+        assert "Missing required credential environment variables" in str(
+            exc_info.value
+        )
 
     def test_error_message_includes_architecture_name(
         self,
@@ -371,7 +398,9 @@ class TestCredentialInjection:
     ) -> None:
         """Test that credential error message includes the architecture name."""
         # No credentials set
-        resolver = MockDeviceResolver(sample_data_model, test_inventory=sample_test_inventory)
+        resolver = MockDeviceResolver(
+            sample_data_model, test_inventory=sample_test_inventory
+        )
 
         with pytest.raises(ValueError) as exc_info:
             resolver.get_resolved_inventory()
@@ -385,7 +414,9 @@ class TestCredentialInjection:
     ) -> None:
         """Test that both missing credentials are listed in error message."""
         # No credentials set
-        resolver = MockDeviceResolver(sample_data_model, test_inventory=sample_test_inventory)
+        resolver = MockDeviceResolver(
+            sample_data_model, test_inventory=sample_test_inventory
+        )
 
         with pytest.raises(ValueError) as exc_info:
             resolver.get_resolved_inventory()
@@ -563,7 +594,9 @@ class TestFullResolutionFlow:
         mock_credentials: None,
     ) -> None:
         """Test that get_resolved_inventory returns properly formatted devices."""
-        resolver = MockDeviceResolver(sample_data_model, test_inventory=sample_test_inventory)
+        resolver = MockDeviceResolver(
+            sample_data_model, test_inventory=sample_test_inventory
+        )
         devices = resolver.get_resolved_inventory()
 
         assert len(devices) == 2
@@ -595,7 +628,14 @@ class TestFullResolutionFlow:
         resolver = MockDeviceResolver(sample_data_model, test_inventory={})
         devices = resolver.get_resolved_inventory()
 
-        required_fields = ["hostname", "host", "os", "username", "password", "device_id"]
+        required_fields = [
+            "hostname",
+            "host",
+            "os",
+            "username",
+            "password",
+            "device_id",
+        ]
 
         for device in devices:
             for field in required_fields:
@@ -694,7 +734,9 @@ class TestFullResolutionFlow:
     ) -> None:
         """Test that appropriate logging is produced during resolution."""
         with caplog.at_level("INFO"):
-            resolver = MockDeviceResolver(sample_data_model, test_inventory=sample_test_inventory)
+            resolver = MockDeviceResolver(
+                sample_data_model, test_inventory=sample_test_inventory
+            )
             _ = resolver.get_resolved_inventory()
 
         # Check for key log messages
@@ -748,10 +790,14 @@ class TestOptionalOverrides:
 
         # Create custom inventory file
         inventory_file = tmp_path / "custom_inventory.yaml"
-        inventory_data = {"test_inventory": {"devices": [{"device_id": "custom_device"}]}}
+        inventory_data = {
+            "test_inventory": {"devices": [{"device_id": "custom_device"}]}
+        }
         inventory_file.write_text(yaml.dump(inventory_data))
 
-        with patch("nac_test_pyats_common.common.base_device_resolver.find_data_file") as mock_find:
+        with patch(
+            "nac_test_pyats_common.common.base_device_resolver.find_data_file"
+        ) as mock_find:
 
             def find_side_effect(filename: str) -> Path | None:
                 if filename == "custom_inventory.yaml":

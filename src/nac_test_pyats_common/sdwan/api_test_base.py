@@ -3,10 +3,11 @@
 
 """SDWAN Manager-specific base test class for SD-WAN API testing.
 
-This module provides the SDWANManagerTestBase class, which extends the generic NACTestBase
-to add SDWAN Manager-specific functionality for testing SD-WAN controllers. It handles
-session management (JSESSIONID and XSRF token), client configuration, and provides
-a standardized interface for running asynchronous verification tests against SDWAN Manager.
+This module provides the SDWANManagerTestBase class, which extends the generic
+NACTestBase to add SDWAN Manager-specific functionality for testing SD-WAN
+controllers. It handles session management (JSESSIONID and XSRF token), client
+configuration, and provides a standardized interface for running asynchronous
+verification tests against SDWAN Manager.
 
 The class integrates with PyATS/Genie test frameworks and provides automatic
 API call tracking for enhanced HTML reporting.
@@ -16,7 +17,9 @@ import asyncio
 from typing import Any
 
 import httpx
-from nac_test.pyats_core.common.base_test import NACTestBase  # type: ignore[import-untyped]
+from nac_test.pyats_core.common.base_test import (
+    NACTestBase,  # type: ignore[import-untyped]
+)
 from pyats import aetest  # type: ignore[import-untyped]
 
 from .auth import SDWANManagerAuth
@@ -46,7 +49,8 @@ class SDWANManagerTestBase(NACTestBase):  # type: ignore[misc]
 
     Methods:
         setup(): Initialize SDWAN Manager authentication and client.
-        get_sdwan_manager_client(): Create and configure an SDWAN Manager-specific HTTP client.
+        get_sdwan_manager_client(): Create and configure an SDWAN Manager-specific
+            HTTP client.
         run_async_verification_test(): Execute async verification tests with PyATS.
 
     Example:
@@ -71,7 +75,8 @@ class SDWANManagerTestBase(NACTestBase):  # type: ignore[misc]
 
         Initializes the SDWAN Manager test environment by:
         1. Calling the parent class setup method
-        2. Obtaining SDWAN Manager session data (jsessionid, xsrf_token) using cached auth
+        2. Obtaining SDWAN Manager session data (jsessionid, xsrf_token) using
+           cached auth
         3. Creating and storing an SDWAN Manager client for use in verification methods
 
         The session data is obtained through the SDWANManagerAuth utility which
@@ -87,12 +92,14 @@ class SDWANManagerTestBase(NACTestBase):  # type: ignore[misc]
         self.client = self.get_sdwan_manager_client()
 
     def get_sdwan_manager_client(self) -> httpx.AsyncClient:
-        """Get an httpx async client configured for SDWAN Manager with response tracking.
+        """Get an httpx async client configured for SDWAN Manager.
 
-        Creates an HTTP client specifically configured for SDWAN Manager API communication
-        with session headers, base URL, and automatic response tracking for HTML
-        report generation. The client is wrapped to capture all API interactions
-        for detailed test reporting.
+        Configured with response tracking.
+
+        Creates an HTTP client specifically configured for SDWAN Manager API
+        communication with session headers, base URL, and automatic response
+        tracking for HTML report generation. The client is wrapped to capture all
+        API interactions for detailed test reporting.
 
         The client includes:
         - JSESSIONID cookie in all requests (via Cookie header)
@@ -101,9 +108,9 @@ class SDWANManagerTestBase(NACTestBase):  # type: ignore[misc]
         - Automatic API call tracking for reporting
 
         Returns:
-            httpx.AsyncClient: Configured client with SDWAN Manager session data, base URL,
-                and wrapped for automatic API call tracking. The client has SSL
-                verification disabled for lab environment compatibility.
+            httpx.AsyncClient: Configured client with SDWAN Manager session data,
+                base URL, and wrapped for automatic API call tracking. The client
+                has SSL verification disabled for lab environment compatibility.
 
         Note:
             SSL verification is disabled (verify=False) to support lab environments

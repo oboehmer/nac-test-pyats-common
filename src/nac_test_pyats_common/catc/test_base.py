@@ -17,7 +17,9 @@ import os
 from typing import Any
 
 import httpx
-from nac_test.pyats_core.common.base_test import NACTestBase  # type: ignore[import-untyped]
+from nac_test.pyats_core.common.base_test import (
+    NACTestBase,  # type: ignore[import-untyped]
+)
 from pyats import aetest  # type: ignore[import-untyped]
 
 from .auth import CatalystCenterAuth
@@ -55,7 +57,9 @@ class CatalystCenterTestBase(NACTestBase):  # type: ignore[misc]
                 return ['device1', 'device2']
 
             async def verify_item(self, item):
-                response = await self.client.get(f"/dna/intent/api/v1/network-device/{item}")
+                response = await self.client.get(
+                    f"/dna/intent/api/v1/network-device/{item}"
+                )
                 return response.status_code == 200
 
             @aetest.test
@@ -93,7 +97,9 @@ class CatalystCenterTestBase(NACTestBase):  # type: ignore[misc]
         self.client = self.get_catc_client()
 
     def get_catc_client(self) -> httpx.AsyncClient:
-        """Get an httpx async client configured for Catalyst Center with response tracking.
+        """Get an httpx async client configured for Catalyst Center.
+
+        Configured with response tracking.
 
         Creates an HTTP client specifically configured for Catalyst Center API
         communication with authentication headers, base URL, and automatic response

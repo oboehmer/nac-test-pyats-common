@@ -38,7 +38,8 @@ class BaseDeviceResolver(ABC):
         - get_credential_env_vars(): Return (username_env_var, password_env_var)
 
     Subclasses MAY override:
-        - get_inventory_filename(): Return inventory filename (default: "test_inventory.yaml")
+        - get_inventory_filename(): Return inventory filename
+          (default: "test_inventory.yaml")
         - build_device_dict(): Customize device dict construction
         - _load_inventory(): Customize inventory loading
 
@@ -272,7 +273,9 @@ class BaseDeviceResolver(ABC):
         logger.debug(f"Filtered to {len(devices_to_test)} devices from test inventory")
         return devices_to_test
 
-    def _build_device_index(self, devices: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    def _build_device_index(
+        self, devices: list[dict[str, Any]]
+    ) -> dict[str, dict[str, Any]]:
         """Build a lookup index of devices by their ID.
 
         Args:
@@ -304,7 +307,9 @@ class BaseDeviceResolver(ABC):
             if key in inventory_entry:
                 return str(inventory_entry[key])
 
-        logger.warning(f"Could not extract device ID from inventory entry: {inventory_entry}")
+        logger.warning(
+            f"Could not extract device ID from inventory entry: {inventory_entry}"
+        )
         return ""
 
     def _safe_extract_device_id(self, device_data: dict[str, Any]) -> str:
@@ -336,7 +341,8 @@ class BaseDeviceResolver(ABC):
 
         if missing_vars:
             raise ValueError(
-                f"Missing required credential environment variables: {', '.join(missing_vars)}. "
+                f"Missing required credential environment variables: "
+                f"{', '.join(missing_vars)}. "
                 f"These are required for {self.get_architecture_name()} D2D testing."
             )
 

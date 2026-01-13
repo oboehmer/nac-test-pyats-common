@@ -5,7 +5,8 @@
 
 This module provides authentication functionality for Cisco SDWAN Manager (formerly
 vManage), which manages the software-defined WAN fabric. The authentication mechanism
-uses form-based login with JSESSIONID cookie and optional XSRF token for CSRF protection.
+uses form-based login with JSESSIONID cookie and optional XSRF token for CSRF
+protection.
 
 The module implements a two-tier API design:
 1. _authenticate() - Low-level method that performs direct SDWAN Manager authentication
@@ -19,7 +20,9 @@ import os
 from typing import Any
 
 import httpx
-from nac_test.pyats_core.common.auth_cache import AuthCache  # type: ignore[import-untyped]
+from nac_test.pyats_core.common.auth_cache import (
+    AuthCache,  # type: ignore[import-untyped]
+)
 
 # Default session lifetime for SDWAN Manager authentication in seconds
 # SDWAN Manager sessions are typically valid for 30 minutes (1800 seconds) by default
@@ -59,7 +62,9 @@ class SDWANManagerAuth:
     """
 
     @staticmethod
-    def _authenticate(url: str, username: str, password: str) -> tuple[dict[str, Any], int]:
+    def _authenticate(
+        url: str, username: str, password: str
+    ) -> tuple[dict[str, Any], int]:
         """Perform direct SDWAN Manager authentication and obtain session data.
 
         This method performs a direct authentication request to the SDWAN Manager
@@ -152,8 +157,9 @@ class SDWANManagerAuth:
         expired ones. This significantly reduces the number of authentication
         requests to the SDWAN Manager.
 
-        The method uses a cache key based on the controller type ("SDWAN_MANAGER") and
-        URL to ensure proper session isolation between different SDWAN Manager instances.
+        The method uses a cache key based on the controller type ("SDWAN_MANAGER")
+        and URL to ensure proper session isolation between different SDWAN Manager
+        instances.
 
         Environment Variables Required:
             SDWAN_URL: Base URL of the SDWAN Manager
@@ -200,7 +206,9 @@ class SDWANManagerAuth:
                 missing_vars.append("SDWAN_USERNAME")
             if not password:
                 missing_vars.append("SDWAN_PASSWORD")
-            raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
+            raise ValueError(
+                f"Missing required environment variables: {', '.join(missing_vars)}"
+            )
 
         # Normalize URL by removing trailing slash
         url = url.rstrip("/")  # type: ignore[union-attr]

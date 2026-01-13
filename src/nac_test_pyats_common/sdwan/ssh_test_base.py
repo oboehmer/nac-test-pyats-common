@@ -20,7 +20,9 @@ import logging
 import os
 from typing import Any
 
-from nac_test.pyats_core.common.ssh_base_test import SSHTestBase  # type: ignore[import-untyped]
+from nac_test.pyats_core.common.ssh_base_test import (
+    SSHTestBase,  # type: ignore[import-untyped]
+)
 
 from .device_resolver import SDWANDeviceResolver
 
@@ -47,7 +49,9 @@ class SDWANTestBase(SSHTestBase):  # type: ignore[misc]
     """
 
     @classmethod
-    def get_ssh_device_inventory(cls, data_model: dict[str, Any]) -> list[dict[str, Any]]:
+    def get_ssh_device_inventory(
+        cls, data_model: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Parse the SD-WAN data model to retrieve the device inventory.
 
         This method is the entry point called by nac-test's orchestrator.

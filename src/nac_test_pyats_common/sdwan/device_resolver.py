@@ -114,7 +114,9 @@ class SDWANDeviceResolver(BaseDeviceResolver):
 
         # Fallback to chassis_id
         chassis_id = device_data.get("chassis_id", "unknown")
-        logger.warning(f"No system_hostname found for {chassis_id}, using chassis_id as hostname")
+        logger.warning(
+            f"No system_hostname found for {chassis_id}, using chassis_id as hostname"
+        )
         return str(chassis_id)
 
     def extract_host_ip(self, device_data: dict[str, Any]) -> str:

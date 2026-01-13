@@ -82,20 +82,24 @@ def register_iosxe_resolver(controller_type: str) -> Callable[[type[T]], type[T]
         """
         # Validate the class extends BaseDeviceResolver
         if not issubclass(cls, BaseDeviceResolver):
-            raise TypeError(f"Resolver class {cls.__name__} must extend BaseDeviceResolver")
+            raise TypeError(
+                f"Resolver class {cls.__name__} must extend BaseDeviceResolver"
+            )
 
         # Check for duplicate registration
         if controller_type in _IOSXE_RESOLVER_REGISTRY:
             existing_class = _IOSXE_RESOLVER_REGISTRY[controller_type]
             raise ValueError(
-                f"A resolver is already registered for controller type '{controller_type}': "
+                f"A resolver is already registered for controller type "
+                f"'{controller_type}': "
                 f"{existing_class.__module__}.{existing_class.__name__}"
             )
 
         # Register the resolver
         _IOSXE_RESOLVER_REGISTRY[controller_type] = cls
         logger.debug(
-            f"Registered IOS-XE resolver {cls.__name__} for controller type '{controller_type}'"
+            f"Registered IOS-XE resolver {cls.__name__} for controller type "
+            f"'{controller_type}'"
         )
 
         return cls
@@ -103,7 +107,9 @@ def register_iosxe_resolver(controller_type: str) -> Callable[[type[T]], type[T]
     return decorator
 
 
-def get_resolver_for_controller(controller_type: str) -> type[BaseDeviceResolver] | None:
+def get_resolver_for_controller(
+    controller_type: str,
+) -> type[BaseDeviceResolver] | None:
     """Get the device resolver class for a specific controller type.
 
     Retrieves the registered resolver class for the specified controller type.
@@ -127,7 +133,8 @@ def get_resolver_for_controller(controller_type: str) -> type[BaseDeviceResolver
 
     if resolver_class:
         logger.debug(
-            f"Found resolver {resolver_class.__name__} for controller type '{controller_type}'"
+            f"Found resolver {resolver_class.__name__} for controller type "
+            f"'{controller_type}'"
         )
     else:
         logger.debug(

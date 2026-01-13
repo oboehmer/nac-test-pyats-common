@@ -8,7 +8,8 @@ This module provides authentication functionality for Cisco Catalyst Center
 networks. The authentication mechanism uses token-based login with Basic Auth.
 
 The module implements a two-tier API design:
-1. _authenticate() - Low-level method that performs direct Catalyst Center authentication
+1. _authenticate() - Low-level method that performs direct Catalyst Center
+   authentication
 2. get_auth() - High-level method that leverages caching for efficient token reuse
 
 This design ensures efficient token management by reusing valid tokens and only
@@ -19,7 +20,9 @@ import os
 from typing import Any
 
 import httpx
-from nac_test.pyats_core.common.auth_cache import AuthCache  # type: ignore[import-untyped]
+from nac_test.pyats_core.common.auth_cache import (
+    AuthCache,  # type: ignore[import-untyped]
+)
 
 # Default token lifetime for Catalyst Center authentication in seconds
 # Catalyst Center tokens are typically valid for 1 hour (3600 seconds) by default
@@ -99,7 +102,9 @@ class CatalystCenterAuth:
         """
         last_error: Exception | None = None
 
-        with httpx.Client(verify=verify_ssl, timeout=AUTH_REQUEST_TIMEOUT_SECONDS) as client:
+        with httpx.Client(
+            verify=verify_ssl, timeout=AUTH_REQUEST_TIMEOUT_SECONDS
+        ) as client:
             for endpoint in AUTH_ENDPOINTS:
                 try:
                     auth_response = client.post(
@@ -132,7 +137,8 @@ class CatalystCenterAuth:
 
             # All endpoints failed
             raise RuntimeError(
-                f"Catalyst Center authentication failed on all endpoints. Last error: {last_error}"
+                f"Catalyst Center authentication failed on all endpoints. "
+                f"Last error: {last_error}"
             ) from last_error
 
     @classmethod
@@ -151,7 +157,8 @@ class CatalystCenterAuth:
             CC_URL: Base URL of the Catalyst Center
             CC_USERNAME: Catalyst Center username for authentication
             CC_PASSWORD: Catalyst Center password for authentication
-            CC_INSECURE: Optional. Set to "True" to disable SSL verification (default: True)
+            CC_INSECURE: Optional. Set to "True" to disable SSL verification
+                (default: True)
 
         Returns:
             A dictionary containing:
@@ -189,7 +196,9 @@ class CatalystCenterAuth:
                 missing_vars.append("CC_USERNAME")
             if not password:
                 missing_vars.append("CC_PASSWORD")
-            raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
+            raise ValueError(
+                f"Missing required environment variables: {', '.join(missing_vars)}"
+            )
 
         # Normalize URL by removing trailing slash
         url = url.rstrip("/")  # type: ignore[union-attr]

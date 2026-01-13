@@ -28,7 +28,12 @@ keywords = ["cisco", "network", "testing", "pyats", "nac", "aci", "sdwan", "cata
 
 dependencies = [
     "httpx>=0.28",        # HTTP client for auth
+    "nac-test @ git+https://github.com/netascode/nac-test.git@v1.1.0b1",
 ]
+
+[tool.uv.sources]
+# For local workspace development, override the git dependency
+nac-test = { workspace = true }
 
 [project.optional-dependencies]
 dev = [
@@ -128,7 +133,7 @@ markers = [
 
 [tool.bandit]
 exclude_dirs = ["tests"]
-skips = ["B101"]
+skips = ["B101", "B501"]
 
 [tool.coverage.run]
 source = ["src/nac_test_pyats_common"]

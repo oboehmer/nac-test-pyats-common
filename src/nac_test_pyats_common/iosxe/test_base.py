@@ -22,7 +22,9 @@ class IOSXETestBase(SSHTestBase):  # type: ignore[misc]
     """
 
     @classmethod
-    def get_ssh_device_inventory(cls, data_model: dict[str, Any]) -> list[dict[str, Any]]:
+    def get_ssh_device_inventory(
+        cls, data_model: dict[str, Any]
+    ) -> list[dict[str, Any]]:
         """Get the SSH device inventory for IOS-XE devices.
 
         Main entry point that detects the architecture and returns
