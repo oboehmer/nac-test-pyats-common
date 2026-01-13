@@ -31,10 +31,6 @@ dependencies = [
     "nac-test @ git+https://github.com/netascode/nac-test.git@v1.1.0b1",
 ]
 
-[tool.uv.sources]
-# For local workspace development, override the git dependency
-nac-test = { workspace = true }
-
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
