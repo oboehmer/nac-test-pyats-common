@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """SDWAN Manager authentication implementation for Cisco SD-WAN.
 
 This module provides authentication functionality for Cisco SDWAN Manager (formerly

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """APIC authentication module for Cisco ACI (Application Centric Infrastructure).
 
 This module provides authentication functionality for Cisco APIC (Application Policy

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """Catalyst Center-specific authentication implementation.
 
 This module provides authentication functionality for Cisco Catalyst Center

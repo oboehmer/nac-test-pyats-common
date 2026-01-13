@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """SD-WAN specific base test class for SSH/Direct-to-Device testing.
 
 This module provides the SDWANTestBase class, which extends the generic SSHTestBase

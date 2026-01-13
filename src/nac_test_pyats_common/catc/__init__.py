@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """Catalyst Center adapter module for NAC PyATS testing.
 
 This module provides Catalyst Center-specific authentication and test base class

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """NAC PyATS Common - Architecture adapters for NAC PyATS testing.
 
 This package provides architecture-specific authentication, test base classes,

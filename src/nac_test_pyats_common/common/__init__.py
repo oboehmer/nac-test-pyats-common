@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """Common base classes for nac-test-pyats-common.
 
 This module provides architecture-agnostic base classes that can be extended

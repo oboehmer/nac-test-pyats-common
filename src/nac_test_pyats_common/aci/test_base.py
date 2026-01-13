@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """APIC-specific base test class for ACI API testing.
 
 This module provides the APICTestBase class, which extends the generic NACTestBase

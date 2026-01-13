@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """IOS-XE adapter module for NAC PyATS testing.
 
 This module provides a generic IOS-XE test base class and resolver registry

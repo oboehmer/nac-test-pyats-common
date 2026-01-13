@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """Base device resolver for SSH/D2D testing.
 
 Provides the Template Method pattern for device inventory resolution.

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """Catalyst Center-specific base test class for API testing.
 
 This module provides the CatalystCenterTestBase class, which extends the generic

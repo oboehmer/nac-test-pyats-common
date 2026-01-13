@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """SD-WAN (SDWAN Manager) adapter module for NAC PyATS testing.
 
 This module provides SD-WAN-specific authentication, test base classes, and device

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """Catalyst Center device resolver placeholder for D2D testing.
 
 This is a placeholder for the Catalyst Center resolver that will be implemented

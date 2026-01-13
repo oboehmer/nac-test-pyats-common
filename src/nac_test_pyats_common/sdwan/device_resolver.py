@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """SD-WAN-specific device resolver for parsing the NAC data model.
 
 This module provides the SDWANDeviceResolver class, which extends

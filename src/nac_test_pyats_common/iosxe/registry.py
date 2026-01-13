@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """Registry for IOS-XE device resolvers.
 
 This module implements a plugin architecture for registering and retrieving

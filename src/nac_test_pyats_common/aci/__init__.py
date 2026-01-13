@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """ACI adapter module for PyATS common utilities.
 
 This module provides the core ACI-specific components for PyATS testing, including

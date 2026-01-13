@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MPL-2.0
+# Copyright (c) 2025 Daniel Schmidt
+
 """Unit tests for BaseDeviceResolver abstract base class.
 
 This module tests the base device resolver functionality including:
