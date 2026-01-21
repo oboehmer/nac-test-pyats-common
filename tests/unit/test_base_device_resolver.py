@@ -643,13 +643,9 @@ class TestErrorHandling:
 
         resolver = ErrorResolver(sample_data_model)
 
-        # Should return "<unknown>" when no fallback fields available
+        # Should return "<unknown>" for error case
         result = resolver._safe_extract_device_id({"error": True})
         assert result == "<unknown>"
-
-        # Should fallback to 'name' field if extract_device_id fails
-        result = resolver._safe_extract_device_id({"error": True, "name": "device-abc"})
-        assert result == "device-abc"
 
         # Should return actual ID for valid case
         result = resolver._safe_extract_device_id({"device_id": "test123"})

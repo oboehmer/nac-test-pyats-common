@@ -209,23 +209,10 @@ class BaseDeviceResolver(ABC):
     # -------------------------------------------------------------------------
 
     def _safe_extract_device_id(self, device_data: dict[str, Any]) -> str:
-        """Safely extract device ID, returning fallback on failure.
-
-        First tries the full extract_device_id() method. If that fails,
-        attempts to extract a basic identifier (typically 'name' field)
-        for better error reporting. Falls back to '<unknown>' only if
-        all extraction attempts fail.
-        """
+        """Safely extract device ID, returning empty string on failure."""
         try:
             return self.extract_device_id(device_data)
         except (KeyError, ValueError):
-            # Try to extract basic identifier for better error messages
-            # Most architectures use 'name' field as primary identifier
-            for key in ["name", "hostname", "device_name", "host_name"]:
-                if key in device_data:
-                    value = device_data[key]
-                    if value:
-                        return str(value)
             return "<unknown>"
 
     def _inject_credentials(self, devices: list[dict[str, Any]]) -> None:
