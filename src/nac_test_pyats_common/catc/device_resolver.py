@@ -87,11 +87,21 @@ class CatalystCenterDeviceResolver(BaseDeviceResolver):
             Unique device name string.
 
         Raises:
-            ValueError: If the device is missing the 'name' field.
+            ValueError: If the device is missing the 'name' field or has
+                an unsupported device_role (INIT, PNP).
         """
         name = device_data.get("name")
         if not name:
             raise ValueError("Device missing 'name' field")
+
+        # Skip devices with INIT or PNP roles (not fully provisioned)
+        device_role = device_data.get("device_role", "").upper()
+        if device_role in ("INIT", "PNP"):
+            raise ValueError(
+                f"Device has unsupported device_role '{device_role}' "
+                "(devices in INIT or PNP state are not fully provisioned)"
+            )
+
         return str(name)
 
     def extract_hostname(self, device_data: dict[str, Any]) -> str:
