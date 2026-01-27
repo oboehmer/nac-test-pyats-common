@@ -836,3 +836,241 @@ class TestSkippedDevicesTracking:
 
         # Check that log includes skipped count
         assert "Resolved 1 devices for mock_arch D2D testing, skipped 1" in caplog.text
+
+
+class TestIPAddressValidation:
+    """Test IP address validation in build_device_dict()."""
+
+    def test_valid_ipv4_passes(
+        self,
+        sample_data_model: dict[str, Any],
+        mock_credentials: None,
+    ) -> None:
+        """Test that valid IPv4 addresses pass validation."""
+        resolver = MockDeviceResolver(sample_data_model)
+        device_data = {
+            "device_id": "device1",
+            "hostname": "router1",
+            "host": "10.1.1.100",
+            "os": "iosxe",
+        }
+        device_dict = resolver.build_device_dict(device_data)
+        assert device_dict["host"] == "10.1.1.100"
+
+    def test_valid_ipv6_passes(
+        self,
+        sample_data_model: dict[str, Any],
+        mock_credentials: None,
+    ) -> None:
+        """Test that valid IPv6 addresses pass validation."""
+        resolver = MockDeviceResolver(sample_data_model)
+        device_data = {
+            "device_id": "device1",
+            "hostname": "router1",
+            "host": "2001:db8::1",
+            "os": "iosxe",
+        }
+        device_dict = resolver.build_device_dict(device_data)
+        assert device_dict["host"] == "2001:db8::1"
+
+    def test_invalid_ip_incomplete_octets_rejected(
+        self,
+        sample_data_model: dict[str, Any],
+    ) -> None:
+        """Test that incomplete IPs like '192.168.1' are rejected."""
+        resolver = MockDeviceResolver(sample_data_model)
+        device_data = {
+            "device_id": "device1",
+            "hostname": "router1",
+            "host": "192.168.1",
+            "os": "iosxe",
+        }
+        with pytest.raises(ValueError) as exc_info:
+            resolver.build_device_dict(device_data)
+        assert "Invalid IP address format" in str(exc_info.value)
+        assert "192.168.1" in str(exc_info.value)
+
+    def test_invalid_ip_garbage_string_rejected(
+        self,
+        sample_data_model: dict[str, Any],
+    ) -> None:
+        """Test that non-IP strings are rejected."""
+        resolver = MockDeviceResolver(sample_data_model)
+        device_data = {
+            "device_id": "device1",
+            "hostname": "router1",
+            "host": "not-an-ip-address",
+            "os": "iosxe",
+        }
+        with pytest.raises(ValueError) as exc_info:
+            resolver.build_device_dict(device_data)
+        assert "Invalid IP address format" in str(exc_info.value)
+
+    def test_invalid_ip_only_cidr_rejected(
+        self,
+        sample_data_model: dict[str, Any],
+    ) -> None:
+        """Test that strings resulting in empty after CIDR strip are rejected."""
+        # This simulates what happens if device_ip was "/32" and gets stripped to ""
+        resolver = MockDeviceResolver(sample_data_model)
+        device_data = {
+            "device_id": "device1",
+            "hostname": "router1",
+            "host": "",  # Empty after CIDR stripping
+            "os": "iosxe",
+        }
+        with pytest.raises(ValueError) as exc_info:
+            resolver.build_device_dict(device_data)
+        # Empty string hits the existing validation before IP validation
+        assert "Invalid host IP" in str(exc_info.value)
+
+    def test_ipv4_mapped_ipv6_passes(
+        self,
+        sample_data_model: dict[str, Any],
+        mock_credentials: None,
+    ) -> None:
+        """Test that IPv4-mapped IPv6 addresses pass validation."""
+        resolver = MockDeviceResolver(sample_data_model)
+        device_data = {
+            "device_id": "device1",
+            "hostname": "router1",
+            "host": "::ffff:192.168.1.1",
+            "os": "iosxe",
+        }
+        device_dict = resolver.build_device_dict(device_data)
+        assert device_dict["host"] == "::ffff:192.168.1.1"
+
+    def test_link_local_ipv6_passes(
+        self,
+        sample_data_model: dict[str, Any],
+        mock_credentials: None,
+    ) -> None:
+        """Test that link-local IPv6 addresses pass validation."""
+        resolver = MockDeviceResolver(sample_data_model)
+        device_data = {
+            "device_id": "device1",
+            "hostname": "router1",
+            "host": "fe80::1",
+            "os": "iosxe",
+        }
+        device_dict = resolver.build_device_dict(device_data)
+        assert device_dict["host"] == "fe80::1"
+
+
+class TestExtractDeviceIdDefault:
+    """Test the default extract_device_id() implementation."""
+
+    def test_default_delegates_to_hostname(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Test that default extract_device_id() returns hostname."""
+        monkeypatch.setenv("TEST_USER", "test_user")
+        monkeypatch.setenv("TEST_PASS", "test_pass")
+
+        class DefaultIdResolver(BaseDeviceResolver):
+            """Resolver that uses default extract_device_id()."""
+
+            def get_architecture_name(self) -> str:
+                return "default_test"
+
+            def get_schema_root_key(self) -> str:
+                return "test"
+
+            def navigate_to_devices(self) -> list[dict[str, Any]]:
+                devices: list[dict[str, Any]] = self.data_model.get("test", {}).get(
+                    "devices", []
+                )
+                return devices
+
+            def extract_hostname(self, device_data: dict[str, Any]) -> str:
+                return str(device_data["hostname"])
+
+            def extract_host_ip(self, device_data: dict[str, Any]) -> str:
+                return str(device_data["host"])
+
+            def extract_os_type(self, device_data: dict[str, Any]) -> str:
+                return str(device_data["os"])
+
+            def get_credential_env_vars(self) -> tuple[str, str]:
+                return ("TEST_USER", "TEST_PASS")
+
+        data_model = {
+            "test": {
+                "devices": [
+                    {
+                        "hostname": "test-router",
+                        "host": "10.1.1.1",
+                        "os": "iosxe",
+                    }
+                ]
+            }
+        }
+
+        resolver = DefaultIdResolver(data_model)
+        devices = resolver.get_resolved_inventory()
+
+        # device_id should equal hostname since we use default implementation
+        assert len(devices) == 1
+        assert devices[0]["device_id"] == "test-router"
+        assert devices[0]["hostname"] == "test-router"
+
+    def test_subclass_can_override_device_id(
+        self,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Test that subclasses can still override extract_device_id()."""
+        monkeypatch.setenv("TEST_USER", "test_user")
+        monkeypatch.setenv("TEST_PASS", "test_pass")
+
+        class CustomIdResolver(BaseDeviceResolver):
+            """Resolver with custom extract_device_id()."""
+
+            def get_architecture_name(self) -> str:
+                return "custom_test"
+
+            def get_schema_root_key(self) -> str:
+                return "test"
+
+            def navigate_to_devices(self) -> list[dict[str, Any]]:
+                devices: list[dict[str, Any]] = self.data_model.get("test", {}).get(
+                    "devices", []
+                )
+                return devices
+
+            def extract_hostname(self, device_data: dict[str, Any]) -> str:
+                return str(device_data["hostname"])
+
+            def extract_device_id(self, device_data: dict[str, Any]) -> str:
+                # Custom: use serial_number instead of hostname
+                return str(device_data["serial_number"])
+
+            def extract_host_ip(self, device_data: dict[str, Any]) -> str:
+                return str(device_data["host"])
+
+            def extract_os_type(self, device_data: dict[str, Any]) -> str:
+                return str(device_data["os"])
+
+            def get_credential_env_vars(self) -> tuple[str, str]:
+                return ("TEST_USER", "TEST_PASS")
+
+        data_model = {
+            "test": {
+                "devices": [
+                    {
+                        "hostname": "test-router",
+                        "serial_number": "SN123456",
+                        "host": "10.1.1.1",
+                        "os": "iosxe",
+                    }
+                ]
+            }
+        }
+
+        resolver = CustomIdResolver(data_model)
+        devices = resolver.get_resolved_inventory()
+
+        # device_id should be serial_number, not hostname
+        assert len(devices) == 1
+        assert devices[0]["device_id"] == "SN123456"
+        assert devices[0]["hostname"] == "test-router"
